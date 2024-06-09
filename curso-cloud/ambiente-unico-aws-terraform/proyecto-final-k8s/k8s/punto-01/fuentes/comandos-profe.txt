@@ -1,0 +1,55 @@
+docker run -d -p 3306:3306 -v /root/mybddirectory:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=toor --name mysql_server mysql:5.7.25
+docker volume create mynewvolume
+docker volume ls
+docker volume inspect mynewvolume
+
+---------------------------------------------
+FROM ubuntu
+
+RUN uname -a && sleep infinity
+docker build -t wjma90/test-ubuntu .
+---------------------------------------------
+
+FROM ubuntu:22.04
+
+RUN uname -a && apt update && apt install hey -y
+------------------------------------------------
+
+FROM ubuntu:22.04
+
+RUN uname -a && apt update && apt install hey curl -y
+-------------------------------------------------------
+
+FROM ubuntu:22.04
+
+RUN uname -a && apt update && apt install hey curl -y
+
+RUN mkdir /users/
+COPY docker-compose.yml /users/
+-------------------------------------------------------
+
+docker login
+docker push wjma90/test-ubuntu:1.1.0
+
+docker buildx create --use
+docker buildx build --platform linux/amd64 --platform linux/arm64 -t wjma90/test-ubuntu:1.2.0 .
+docker buildx build --platform linux/amd64 --platform linux/arm64 -t wjma90/test-ubuntu:1.2.0 --push .
+
+docker compose up -d bd
+docker compose ps
+docker compose logs -f bd
+
+docker compose up -d
+
+docker compose up -d --force-recreate --no-deps --no-build apipersona
+docker compose logs -f apipersona
+http://localhost:8090/api/preferencias/persona/2
+http://localhost:16686/search
+
+http://localhost:9090/
+http_server_requests_seconds_count
+
+docker run --rm -it wjma90/test-ubuntu:1.2.0 bash
+hey http://192.168.1.35:8090/api/preferencias/persona/2
+
+docker compose down -v

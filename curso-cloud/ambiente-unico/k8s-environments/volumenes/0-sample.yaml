@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-vol-1
+  namespace: default
+spec:
+  containers:
+  - name: nginx
+    image: nginx:alpine
+    volumeMounts: # aquí se anexa un volume en alguna ruta del container
+    - mountPath: /usr/share/nginx/
+      name: home
+      readOnly: true
+    # - mountPath: /data-git
+    #   name: git
+    - mountPath: /temp # /tmp
+      name: temp
+      # readonly: true
+
+  volumes: # aquí se declara el volume y de qué tipo será
+  - name: home
+    hostPath:
+      path: /home
+    # readOnly: true
+  # - name: git
+  #   gitRepo: ## deprecated
+  #     repository: https://github.com/wjma90/pattern-request-reply-scalabilty-topic-partition.git
+  - name: temp
+    emptyDir: {}

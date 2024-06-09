@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-configmap-app
+  namespace: name1
+data:
+  host: 172.21.6.227
+  port: "3306"

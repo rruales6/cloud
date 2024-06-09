@@ -1,0 +1,68 @@
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: mycluster
+image: rancher/k3s:v1.25.13-rc3-k3s1 #v1.24.14-rc1-k3s1
+servers: 1
+agents: 4
+ports:
+ - port: 80:80 # same as `--port 8080:80@loadbalancer
+   nodeFilters:
+   - loadbalancer
+ - port: 443:443 # same as `--port 8080:80@loadbalancer
+   nodeFilters:
+   - loadbalancer
+ - port: 9090:9090 #prometheus
+   nodeFilters:
+   - loadbalancer
+ - port: 20001:20001 #kiali
+   nodeFilters:
+   - loadbalancer
+ - port: 16686:16686 #jaeger
+   nodeFilters:
+   - loadbalancer
+ - port: 3000:3000 #grafana
+   nodeFilters:
+   - loadbalancer
+ - port: 31445:31445
+   nodeFilters:
+   - agent:0
+   - agent:1
+   - agent:2
+   - agent:3
+volumes:
+- volume: "/Users/willianmarchan/Projects/enterprises/Dictado-cursos/2-curso-docker-aws-kafka-k8s/5-k8s/addons/ingress/addon-ingress-traefik-v2.yaml:/var/lib/rancher/k3s/server/manifests/traefik-v2.yaml"
+  nodeFilters:
+  - server:*
+# - volume: "/Users/willianmarchan/Projects/Mitocode/3-k8s-practice/environments/k3d/addon-ingress-nginx.yaml:/var/lib/rancher/k3s/server/manifests/ingress-nginx.yaml"
+#   nodeFilters:
+#   - server:*
+options:
+ k3d: 
+   wait: true 
+   timeout: "60s"
+   disableLoadbalancer: false
+ k3s:
+   extraArgs:
+   - arg: --disable=traefik
+     nodeFilters:
+     - server:*
+   - arg: --tls-san=my.host.domain
+     nodeFilters:
+     - server:*
+   nodeLabels:
+   - label: node=system
+     nodeFilters:
+     - agent:0
+   - label: node=system
+     nodeFilters:
+     - agent:1
+   - label: node=workloads
+     nodeFilters:
+     - agent:2
+   - label: node=workloads
+     nodeFilters:
+     - agent:3
+ kubeconfig:
+   updateDefaultKubeconfig: true
+   switchCurrentContext: true

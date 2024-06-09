@@ -1,0 +1,117 @@
+{
+	"info": {
+		"_postman_id": "84e33490-bce7-4155-a618-2e8cbf180b1f",
+		"name": "K8S-PROYECTO",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12013619"
+	},
+	"item": [
+		{
+			"name": "obtenerPorId",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://35.243.205.107:80/api/personas/5",
+					"protocol": "http",
+					"host": [
+						"35",
+						"243",
+						"205",
+						"107"
+					],
+					"port": "80",
+					"path": [
+						"api",
+						"personas",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "obtenerTodosRango",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://35.243.205.107:80/api/personas/rango/1/100",
+					"protocol": "http",
+					"host": [
+						"35",
+						"243",
+						"205",
+						"107"
+					],
+					"port": "80",
+					"path": [
+						"api",
+						"personas",
+						"rango",
+						"1",
+						"100"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "obtenerTodos",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://35.243.205.107:80/api/personas/",
+					"protocol": "http",
+					"host": [
+						"35",
+						"243",
+						"205",
+						"107"
+					],
+					"port": "80",
+					"path": [
+						"api",
+						"personas",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CrearPersona",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\n        \"id\": 5,\n        \"nombre\": \"Ricardo\",\n        \"edad\": 25,\n        \"sexo\": \"M\"\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://35.243.205.107:80/api/personas/",
+					"protocol": "http",
+					"host": [
+						"35",
+						"243",
+						"205",
+						"107"
+					],
+					"port": "80",
+					"path": [
+						"api",
+						"personas",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: stack-api-persona
+  namespace: api
+  annotations:
+    sample: 800-555-1212
+  labels:
+    app: api-persona
+    version: v1
+spec:
+  # https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+  affinity:
+    nodeAffinity: #podAffinity #podAntiAffinity
+      requiredDuringSchedulingIgnoredDuringExecution: #preferredDuringSchedulingIgnoredDuringExecution
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: kubernetes.io/arch
+              operator: In
+              values:
+              - amd64
+              - arm64
+            - key: node #kubernetes.io/hostname #node
+              operator: In
+              values:
+              - workloads
+              #- aks-nodepool1-12014898-vmss000001 #workloads
+    # podAntiAffinity:
+    #   requiredDuringSchedulingIgnoredDuringExecution:
+    #   - labelSelector:
+    #       matchExpressions:
+    #       - key: app
+    #         operator: In
+    #         values:
+    #         - nginx
+    #     topologyKey: "node"
+  containers:
+   - name: api-persona 
+     image: wjma90/k8s-api-persona
+     ports:
+        - containerPort: 8080
+     env:
+        - name: host
+          value: localhost
+        # - name: host
+        #   valueFrom:
+        #     fieldRef:
+        #       fieldPath: status.podIP
+        - name: port
+          value: "3306"
+        - name: MYSQL_ROOT_PASSWORD
+          value: toor
+        - name: MYSQL_ROOT_HOST
+          value: "%"
+     resources:
+      requests:
+        memory: "512Mi"
+        cpu: "300m" # 1000m = 1
+      limits:
+        memory: "1Gi"
+        cpu: "500m"
+   - name: bd   
+     image: wjma90/k8s-bd-apis
+     env:
+     - name: MYSQL_ROOT_PASSWORD
+       value: toor
+     - name: MYSQL_ROOT_HOST
+       value: "%"
+     ports:
+        - containerPort: 3306
+     resources:
+      requests:
+        memory: "500Mi"
+        cpu: "300m"
+      limits:
+        memory: "600Mi"
+        cpu: "500m"
+      # qos: Guaranteed
+  #qos: BestEffort, Burstable, Guaranteed
+  restartPolicy: OnFailure #valores posibles -> Always, OnFailure, Never
+  # https://learnk8s.io/kubernetes-instance-calculator

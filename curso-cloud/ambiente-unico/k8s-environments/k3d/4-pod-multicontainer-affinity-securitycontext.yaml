@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: stack-api-persona
+  namespace: default
+  annotations:
+    sample: 800-555-1212
+  labels:
+    app: api-persona
+    version: v1
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: kubernetes.io/arch
+              operator: In
+              values:
+              - amd64
+              - arm64
+            - key: node
+              operator: In
+              values:
+              - workloads
+  # Security a nivel de pod solo se permite lo que se indica en la docu: https://v1-25.docs.kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#podsecuritycontext-v1-core
+  securityContext:
+    seccompProfile:
+        type: RuntimeDefault
+    # runAsNonRoot: true
+    #   runAsUser: 2000
+    #   runAsGroup: 2000
+  containers:
+   - name: api-persona 
+     image: wjma90/k8s-api-persona
+     ports:
+        - containerPort: 8080
+     env:
+        - name: host
+          value: localhost
+        # - name: host
+        #   valueFrom:
+        #     fieldRef:
+        #       fieldPath: status.podIP
+        - name: port
+          value: "3306"
+        - name: MYSQL_ROOT_PASSWORD
+          value: toor
+        - name: MYSQL_ROOT_HOST
+          value: "%"
+     resources:
+      requests:
+        memory: "64Mi"
+        cpu: "250m"
+      limits:
+        memory: "300Mi"
+        cpu: "500m"
+     # los valores son mas amplios con respecto a nivel de pod -> https://v1-25.docs.kubernetes.io/docs/reference/generated/kubernetes-api/v1.25/#securitycontext-v1-core
+     securityContext:
+      # seLinuxOptions:
+      #   level: "s0:c123,c456" #s0 -> nivel de seguridad + categorias que deben estar preconfigurados en el SO del nodo
+      runAsNonRoot: true
+      runAsUser: 2000
+      runAsGroup: 2000
+      readOnlyRootFilesystem: false
+      # allowPrivilegeEscalation: false
+      privileged: false
+      capabilities:
+        drop:
+        - ALL
+   - name: bd   
+     image: wjma90/k8s-bd-apis
+     ports:
+        - containerPort: 3306
+     securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+          drop:
+          - NET_RAW
+          - NET_ADMIN
+  # securityContext:
+  #   runAsNonRoot: true
+    # runAsUser: 2000
+    # fsGroup: 2000
+  restartPolicy: OnFailure #valores posibles -> Always, OnFailure, Never

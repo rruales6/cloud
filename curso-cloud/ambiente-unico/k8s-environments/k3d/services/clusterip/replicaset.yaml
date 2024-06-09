@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: rs-1
+  labels:
+    app: rs-1 
+spec:
+  replicas: 2 # el comando rollout funciona con rs pero no con rc
+  selector: #esta feature hace la diferencia con los RC (replication controller)
+    #pueden usar cualquier criterio de busq de pods
+    #busca cuantos cumople y crean si falta con este label igual si se eliminan los crea 
+    matchLabels: 
+      app: example
+      version: v1
+    # matchExpressions: 
+    #   - {key: app, operator: In, values: ["rs-1"]} # In, NotIn, Exists, DoesNotExist
+  # especificacion del pod
+  template:
+    metadata:
+      labels:
+        app: rs-1
+    spec:
+      nodeSelector:
+        node: workloads
+      containers:
+      - image: nginxdemos/hello:0.2
+        name: helloworld
+        ports:
+        - containerPort: 80
+          protocol: TCP

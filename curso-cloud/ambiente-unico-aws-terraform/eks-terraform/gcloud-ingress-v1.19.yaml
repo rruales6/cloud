@@ -1,0 +1,57 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: application
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /login
+        pathType: ImplementationSpecific
+        backend:
+          service: 
+            name: api-seguridad-np
+            port: 
+              number: 80
+      - path: /logout
+        pathType: ImplementationSpecific
+        backend:
+          service: 
+            name: api-seguridad-np
+            port: 
+              number: 80
+      - path: /api/security # se puede quitar este comodín acorde a pruebas con el balanceador de la cloud si no llegase a funcionar 
+        pathType: ImplementationSpecific
+        backend:
+          service: 
+            name: api-seguridad-np
+            port: 
+              number: 80
+      - path: /api/sede
+        pathType: ImplementationSpecific
+        backend:
+          service: 
+            name: api-sede-np
+            port: 
+              number: 80
+      - path: /api/negocio
+        pathType: ImplementationSpecific
+        backend:
+          service: 
+            name: api-negocio-np
+            port: 
+              number: 80
+      - path: /api/tiponegocio
+        pathType: ImplementationSpecific
+        backend:
+          service: 
+            name: api-negocio-np
+            port: 
+              number: 80
+      - path: /api/feedback
+        pathType: ImplementationSpecific
+        backend:
+          service: 
+            name: api-feedback-np
+            port: 
+              number: 80

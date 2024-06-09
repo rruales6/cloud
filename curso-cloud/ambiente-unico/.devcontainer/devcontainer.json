@@ -1,0 +1,40 @@
+{
+    "name": "curso-k8s",
+    "dockerComposeFile": ["docker-compose.yaml"],
+    "service": "tools",
+    "workspaceFolder": "/workspace",
+    "mounts": [
+        "source=${env:HOME}${env:USERPROFILE}/.aws,target=/root/.aws,type=bind", // opcional
+        "source=${env:HOME}${env:USERPROFILE}/.config/gcloud,target=/root/.config/gcloud,type=bind", // opcional
+        "source=${env:HOME}${env:USERPROFILE}/.azure,target=/root/.azure,type=bind", // opcional
+        "source=${env:HOME}${env:USERPROFILE}/.m2,target=/root/.m2,type=bind", // opcional
+        "source=${env:HOME}${env:USERPROFILE}/.kube,target=/root/.kube,type=bind", // es indispensable
+        "source=${env:HOME}${env:USERPROFILE}/.ssh,target=/root/.ssh,type=bind,readonly", //opcional, se usa para temas de git
+        "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind" // es indispensable
+    ],
+    // Configure tool-specific properties.
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+			// Set *default* container specific settings.json values on
+			// container create.
+			"settings": { 
+				"java.compile.nullAnalysis.mode": "automatic",
+                "java.configuration.updateBuildConfiguration": "automatic"
+			},
+			
+			// Add the IDs of extensions you want installed when the container
+			// is created.
+			"extensions": [ // usar / eliminar las que uses o no uses respectivamente
+                "vmware.vscode-manifest-yaml",
+                "fabiospampinato.vscode-diff",
+                "hashicorp.terraform",
+                "redhat.vscode-xml",
+                "visualstudioexptteam.vscodeintellicode",
+                "hediet.vscode-drawio"
+                // "amazonwebservices.aws-toolkit-vscode",
+			]
+		}
+	},
+    "features": {}
+}

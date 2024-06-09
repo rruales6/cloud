@@ -1,0 +1,7 @@
+com/example/wjma90/model/Persona.class
+com/example/wjma90/service/impl/PersonaServiceImpl.class
+com/example/wjma90/dto/RespuestaApi.class
+com/example/wjma90/service/PersonaService.class
+com/example/wjma90/dao/PersonaDAO.class
+com/example/wjma90/controller/api/ApiPersonaController.class
+com/example/wjma90/App.class

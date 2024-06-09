@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-helper
+  namespace: jenkins
+spec:
+
+  volumes:
+  - name: shared-data
+    persistentVolumeClaim:
+      claimName: efs-jenkins
+
+  containers:
+  - name: busybox
+    image: busybox
+    command:
+      - sleep
+      - "3600"
+    volumeMounts:
+    - name: shared-data
+      mountPath: /pod-data

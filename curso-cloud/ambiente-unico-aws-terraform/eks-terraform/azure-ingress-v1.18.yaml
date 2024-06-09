@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: application
+  annotations:
+    kubernetes.io/ingress.class: "azure/application-gateway"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /login
+        backend:
+          serviceName: apiseguridad
+          servicePort: 80
+      - path: /logout
+        backend:
+          serviceName: apiseguridad
+          servicePort: 80
+      - path: /api/security/*
+        backend:
+          serviceName: apiseguridad
+          servicePort: 80
+      - path: /api/sede/*
+        backend:
+          serviceName: apisede
+          servicePort: 80
+      - path: /api/negocio/*
+        backend:
+          serviceName: apinegocio
+          servicePort: 80
+      - path: /api/tiponegocio/*
+        backend:
+          serviceName: apinegocio
+          servicePort: 80
+      - path: /api/feedback/*
+        backend:
+          serviceName: apifeedback
+          servicePort: 80

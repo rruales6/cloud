@@ -1,0 +1,54 @@
+# aws ec2 create-volume --region us-east-1 --availability-zone=us-east-1b --size=10 --volume-type=gp2  
+# az disk create -g personal -n my-data-disk --size-gb 2 --location eastus --zone 1 --sku StandardSSD_LRS
+# gcloud compute disks create --size=10GB --zone=us-east1-c my-data-disk
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-vol
+spec:
+
+  volumes:
+  - name: shared-data
+    azureDisk:
+       kind: Managed
+       diskName: my-data-disk
+       fsType: ext4
+       #diskURI: /subscriptions/<subscription_id>/resourceGroups/<resource_group>/providers/Microsoft.Compute/disks/<disk_name>
+       diskURI: /subscriptions/014edaf3-fae6-4300-9a4a-1c32361b7d64/resourceGroups/personal/providers/Microsoft.Compute/disks/my-data-disk
+
+  # nodeSelector:
+  #   topology.kubernetes.io/zone: eastus-1
+
+  # nodeSelector:
+  #   node: system
+
+  affinity:
+    nodeAffinity: 
+      requiredDuringSchedulingIgnoredDuringExecution: #preferredDuringSchedulingIgnoredDuringExecution
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: topology.kubernetes.io/zone
+              operator: In
+              values:
+              - eastus-1
+            - key: node
+              operator: In
+              values:
+              - workloads
+
+  containers:
+  - name: nginx
+    image: nginx
+    volumeMounts:
+    - name: shared-data
+      mountPath: /usr/share/nginx/html
+      readOnly: true
+
+  - name: busybox
+    image: busybox
+    command:
+      - sleep
+      - "3600"
+    volumeMounts:
+    - name: shared-data
+      mountPath: /pod-data

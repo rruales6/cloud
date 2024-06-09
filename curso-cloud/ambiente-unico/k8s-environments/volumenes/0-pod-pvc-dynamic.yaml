@@ -1,0 +1,41 @@
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pvc-dynamic #pvc creará el volumen por nosotros
+spec:
+  # storageClassName: default # gp2 storageclass por defecto
+  # storageClassName: default # azure storageclass por defecto
+  storageClassName: local-path
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: demo
+  labels:
+    app: demo
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      volumeMounts:
+      - name: shared-data
+        mountPath: /usr/share/nginx/html
+        readOnly: true
+    - name: busybox
+      image: busybox
+      command:
+        - sleep
+        - "3600"
+      volumeMounts:
+      - name: shared-data
+        mountPath: /pod-data
+  volumes:
+    - name: shared-data
+      persistentVolumeClaim:
+        claimName: pvc-dynamic

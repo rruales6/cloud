@@ -1,0 +1,61 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: application
+  annotations:
+    kubernetes.io/ingress.class: "alb"
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /login
+        pathType: Prefix
+        backend:
+          service: 
+            name: api-seguridad
+            port: 
+              number: 80
+      - path: /logout
+        pathType: Prefix
+        backend:
+          service: 
+            name: api-seguridad
+            port: 
+              number: 80
+      - path: /api/security/*
+        pathType: Prefix
+        backend:
+          service: 
+            name: api-seguridad
+            port: 
+              number: 80
+      - path: /api/sede/*
+        pathType: Prefix
+        backend:
+          service: 
+            name: api-sede-np
+            port: 
+              number: 80
+      - path: /api/negocio/*
+        pathType: Prefix
+        backend:
+          service: 
+            name: api-negocio
+            port: 
+              number: 80
+      - path: /api/tiponegocio/*
+        pathType: Prefix
+        backend:
+          service: 
+            name: api-negocio
+            port: 
+              number: 80
+      - path: /api/feedback/*
+        pathType: Prefix
+        backend:
+          service: 
+            name: api-feedback
+            port: 
+              number: 80

@@ -1,0 +1,89 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus
+  namespace: monitoring
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: prometheus
+rules:
+- apiGroups: [""]
+  resources:
+  - nodes
+  - nodes/metrics
+  - services
+  - endpoints
+  - pods
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources:
+  - configmaps
+  verbs: ["get"]
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs: ["get", "list", "watch"]
+- nonResourceURLs: ["/metrics"]
+  verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: prometheus
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: prometheus
+subjects:
+- kind: ServiceAccount
+  name: prometheus
+  namespace: monitoring
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: prometheus
+  namespace: monitoring
+  labels:
+    prometheus: prometheus
+spec:
+  replicas: 1
+  nodeSelector:
+    node: system
+  serviceMonitorNamespaceSelector: {}
+  podMonitorNamespaceSelector: {}
+  serviceAccountName: prometheus
+  serviceMonitorSelector: {}
+    # any: true
+    # matchExpressions:
+    # - key: monitoring
+    #   operator: Exists
+  # alerting:
+  #   alertmanagers:
+  #   - namespace: monitoring
+  #     name: alertmanager
+  #     port: web
+  # additionalScrapeConfigs:
+  #   name: additional-scrape-configs
+  #   key: extra-config.yaml
+  # remoteWrite:
+  # - url: https://metric-api.newrelic.com/prometheus/v1/write?prometheus_server=poc-arch-wjma 
+  #   bearerToken: dasdasdsd
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: monitoring
+spec:
+  type: ClusterIP #LoadBalancer #
+  ports:
+  - name: web
+    port: 9090
+    protocol: TCP
+    # targetPort: 9090
+  selector:
+    prometheus: prometheus

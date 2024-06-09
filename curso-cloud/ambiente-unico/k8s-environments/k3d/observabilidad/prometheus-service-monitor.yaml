@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: api-persona
+  namespace: monitoring
+  labels:
+    prometheus: servicemonitor
+    monitoring: "true"
+spec:
+  selector:
+    matchLabels:
+      app: apipersona
+  namespaceSelector:
+    matchNames:
+    - default
+  endpoints:
+  - port: http
+    interval: 10s
+    path: /actuator/prometheus

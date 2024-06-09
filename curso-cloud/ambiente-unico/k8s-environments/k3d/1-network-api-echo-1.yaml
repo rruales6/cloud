@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: apiecho-1
+  labels:
+    app: apiecho-1
+spec:
+  nodeSelector:
+    # node: workloads
+    kubernetes.io/hostname: k3d-mycluster-agent-1
+  containers:
+   - name: api
+     image: wjma90/api-echo-example
+     ports:
+        - containerPort: 8080

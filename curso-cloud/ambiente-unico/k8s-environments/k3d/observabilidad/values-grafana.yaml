@@ -1,0 +1,159 @@
+rbac:
+  create: true
+
+serviceAccount:
+  create: true
+
+replicas: 1
+
+deploymentStrategy:
+  type: RollingUpdate
+
+# image:
+#   repository: grafana/grafana
+#   tag: 8.4.2
+#   sha: ""
+#   pullPolicy: IfNotPresent
+
+podPortName: grafana
+
+nodeSelector:
+  node: system
+
+service:
+  enabled: true
+  type: ClusterIP #ClusterIP #LoadBalancer
+  port: 3000
+  targetPort: 3000
+  annotations:
+    "service.beta.kubernetes.io/aws-load-balancer-internal": "false"
+  labels: {}
+  portName: service
+
+## Enable persistence using Persistent Volume Claims
+## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
+##
+persistence:
+  type: pvc
+  enabled: false
+  # storageClassName: default
+  accessModes:
+    - ReadWriteOnce
+  size: 2Gi
+  # annotations: {}
+  finalizers:
+    - kubernetes.io/pvc-protection
+  # selectorLabels: {}
+  # subPath: ""
+  # existingClaim:
+
+  ## If persistence is not enabled, this allows to mount the
+  ## local storage in-memory to improve performance
+  ##
+  inMemory:
+    enabled: true
+    ## The maximum usage on memory medium EmptyDir would be
+    ## the minimum value between the SizeLimit specified
+    ## here and the sum of memory limits of all containers in a pod
+    ##
+    sizeLimit: 4Gi
+
+initChownData:
+  ## If false, data ownership will not be reset at startup
+  ## This allows the prometheus-server to be run with an arbitrary user
+  ##
+  enabled: true
+
+  ## initChownData container image
+  ##
+  image:
+    repository: busybox
+    tag: "1.31.1"
+    sha: ""
+    pullPolicy: IfNotPresent
+
+  ## initChownData resource requests and limits
+  ## Ref: http://kubernetes.io/docs/user-guide/compute-resources/
+  ##
+  resources: {}
+  #  limits:
+  #    cpu: 100m
+  #    memory: 128Mi
+  #  requests:
+  #    cpu: 100m
+  #    memory: 128Mi
+
+# Use an existing secret for the admin user.
+admin:
+  existingSecret: "grafana"
+  # userKey: admin-user
+  # passwordKey: admin-password
+
+# datasources:
+#   datasources.yaml:
+#     apiVersion: 1
+#     datasources:
+#     - access: proxy
+#       editable: true
+#       isDefault: true
+#       jsonData:
+#         timeInterval: 5s
+#       name: Prometheus
+#       orgId: 1
+#       type: prometheus
+#       url: http://prometheus:9090
+#     - access: proxy
+#       editable: true
+#       isDefault: false
+#       jsonData:
+#         timeInterval: 5s
+#       name: Loki
+#       orgId: 1
+#       type: loki
+#       uid: my_loki_uid
+#       jsonData:
+#         maxLines: 1000
+#         derivedFields:
+#           - datasourceUid: my_jaeger_uid
+#             matcherRegex: "traceID=(\\w+)"
+#             name: TraceID
+#             # url will be interpreted as query for the datasource
+#             url: '$${__value.raw}'
+
+#           # Field with external link.
+#           # - matcherRegex: "traceID=(\\w+)"
+#           #   name: TraceID
+#           #   url: 'http://myjaeger-query:16686/trace/$${__value.raw}'
+#       url: http://loki:3100
+#     - access: proxy
+#       editable: true
+#       isDefault: false
+#       jsonData:
+#         timeInterval: 5s
+#       name: Jaeger
+#       orgId: 1
+#       type: jaeger
+#       uid: my_jaeger_uid
+#       url: http://myjaeger-query:16686/jaeger
+# dashboardProviders: 
+#   dashboardproviders.yaml:
+#     apiVersion: 1
+#     providers:
+#     - disableDeletion: false
+#       folder: istio
+#       name: istio
+#       options:
+#         path: /var/lib/grafana/dashboards/istio
+#       orgId: 1
+#       type: file
+#     - disableDeletion: false
+#       folder: istio
+#       name: istio-services
+#       options:
+#         path: /var/lib/grafana/dashboards/istio-services
+#       orgId: 1
+#       type: file
+
+# dashboardsConfigMaps:
+#   istio: "istio-grafana-dashboards"
+#   istio-services: "istio-services-grafana-dashboards"

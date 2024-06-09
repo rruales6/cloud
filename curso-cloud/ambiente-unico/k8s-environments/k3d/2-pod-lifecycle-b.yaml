@@ -1,0 +1,16 @@
+#este pod termina bien y por ende el estado es completed
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp-pod
+  labels:
+    app: myapp
+spec:
+  nodeSelector:
+    node: workloads
+  containers:
+  - name: myapp-container
+    image: busybox
+    imagePullPolicy: IfNotPresent
+    command: ['sh', '-c', 'echo The Pod is running && sleep 15'] #exit = 0
+  restartPolicy: OnFailure

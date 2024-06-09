@@ -1,0 +1,5 @@
+target/
+prometheus/
+otel/
+basedatos/
+disco/

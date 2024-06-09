@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example
+  labels:
+    app: example
+    # version: v1
+spec:
+  selector: #permite seleccionar un conjunto de objetos que cumplan las condiciones
+    # matchExpressions: 
+    #   - {key: app, operator: In, values: ["deploy-1"]}
+    matchLabels:
+      app: example
+      # version: v1.
+  strategy:
+    type: RollingUpdate # otro valor ->  Recreate (evita que el controlador actualice de forma automática)
+    rollingUpdate:
+      maxSurge: 1 # como va creando los pendientes de  la cantidad dereplicas de 1 en uno hasta llegar a la replica 
+      maxUnavailable: 0  #sin remplazar alguno que este bien cuando los nuevos no estan ready
+      #no eliminar los antiguos si el nuevo no se crea bien 
+  replicas: 2 #replicaset
+  # progressDeadlineSeconds: 600
+  # revisionHistoryLimit: 10  #guardar 10  rs history
+  template: # Plantilla que define los containers - POD
+    metadata:
+      labels:
+        app: example
+        # version: v1.0
+    spec:
+      nodeSelector:
+        node: workloads
+      containers:
+      - image: "gcr.io/google-samples/hello-app" #nginxdemos/hello:0.2
+        name: helloworld
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: / # puede ser solo la raiz "/", probar esto en caso no funcione en azure application gateway
+            port: 8080
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+          periodSeconds: 5

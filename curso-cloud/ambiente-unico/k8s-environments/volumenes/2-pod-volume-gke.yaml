@@ -1,0 +1,48 @@
+# aws ec2 create-volume --region us-east-1 --availability-zone=us-east-1d --size=10 --volume-type=gp2  
+# az disk create -g mitocode -n mydisk --size-gb 10 --location eastus
+# gcloud compute disks create --size=2GB --zone=us-east1-c my-data-disk
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-vol
+spec:
+
+  volumes:
+  - name: shared-data
+    gcePersistentDisk:
+     pdName: my-data-disk
+     fsType: ext4
+
+  # nodeSelector:
+  #   failure-domain.beta.kubernetes.io/zone: us-east1-c
+
+  affinity:
+    nodeAffinity: 
+      requiredDuringSchedulingIgnoredDuringExecution: #preferredDuringSchedulingIgnoredDuringExecution
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: topology.kubernetes.io/zone #failure-domain.beta.kubernetes.io/zone
+              operator: In
+              values:
+              - us-east1-c
+            - key: node #kubernetes.io/hostname #node
+              operator: In
+              values:
+              - workloads #gke-mygke-cluster-workloads-4a0fb0bd-3hg2 #workloads
+
+  containers:
+  - name: nginx
+    image: nginx
+    volumeMounts:
+    - name: shared-data
+      mountPath: /usr/share/nginx/html
+      readOnly: true
+
+  - name: busybox
+    image: busybox
+    command:
+      - sleep
+      - "3600"
+    volumeMounts:
+    - name: shared-data
+      mountPath: /pod-data

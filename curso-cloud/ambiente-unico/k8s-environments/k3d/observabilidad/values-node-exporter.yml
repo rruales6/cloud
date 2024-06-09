@@ -1,0 +1,18 @@
+prometheus:
+  monitor:
+    enabled: true
+    additionalLabels:
+      monitoring: ksm
+    # namespace: ""
+    jobLabel: "node-exporter"
+
+    scheme: http
+    # basicAuth: {}
+    # bearerTokenFile:
+    # tlsConfig: {}
+    # proxyUrl: ""
+    # selectorOverride: {}
+    # relabelings: []
+    # metricRelabelings: []
+    # interval: ""
+    scrapeTimeout: 10s

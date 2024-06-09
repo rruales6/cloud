@@ -1,0 +1,76 @@
+version: "2"
+services:
+
+  bd:
+    # build: api-persona-v2/basedatos/
+    image: rruales06/bdd-api-persona:1.0.0
+    environment:
+      - MARIADB_ROOT_PASSWORD=123456 #toor
+      - MARIADB_ROOT_HOST=%
+    # network_mode: host
+    # extra_hosts:
+    #   - "moby:127.0.0.1"
+    ports:
+      - "3306:3306"
+    # volumes: 
+    #   - /Users/willianmarchan/Projects/Dictado-cursos/2-curso-docker-aws-kafka-k8s/bdserver:/var/lib/mysql/
+    restart: on-failure
+
+  apipersona:
+    # build: api-persona-v2/
+    hostname: mycontainerapipersona
+    image: rruales06/api-persona:1.0.0
+    environment:
+      - host=bd #localhost #bd
+      - password=123456
+      - TRACE_ENABLED=true
+      - TRACER_URL=http://jaeger:9411/api/v2/spans
+    # network_mode: host
+    # extra_hosts:
+    #   - "moby:127.0.0.1"
+    ports:
+      - "8080:8080"
+      #- "8081:8080"
+    restart: on-failure
+    depends_on:
+      - bd
+
+  apipreferencia:
+    # build: api-persona-preferencia/
+    image: wjma90/k8s-api-preferencia
+    environment:
+      - host=bd
+      - password=123456
+      - url_apipersona=mycontainerapipersona
+      - port_apipersona=8080
+      - TRACE_ENABLED=true
+      - TRACER_URL=http://jaeger:9411/api/v2/spans
+    ports:
+      - "8090"
+    restart: on-failure
+
+  # prometheus:
+  #   image: prom/prometheus:v2.44.0
+  #   ports:
+  #     - "9090"
+  #   volumes: 
+  #     - /Users/willianmarchan/Projects/Dictado-cursos/2-curso-docker-aws-kafka-k8s/5-k8s/apps/basic/api-persona-v2/prometheus/:/etc/prometheus/
+  #   command: 
+  #     - '--config.file=/etc/prometheus/prometheus.yml'
+  #     - '--storage.tsdb.path=/prometheus'
+  #     - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+  #     - '--web.console.templates=/usr/share/prometheus/consoles'
+  
+  # jaeger:
+  #   image: jaegertracing/all-in-one:1.45.0
+  #   ports:
+  #     - "16686"
+  #     - "14268:14268"
+  #     - "14250:14250"
+  #     - "6831:6831/udp"
+  #     - "6832:6832/udp"
+  #     - "9411:9411"
+  #     - "4318:4318"
+  #   environment:
+  #     - COLLECTOR_ZIPKIN_HOST_PORT=:9411
+  #     - COLLECTOR_OTLP_ENABLED=true

@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: application
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /login
+        backend:
+          serviceName: apiseguridadnp
+          servicePort: 80
+      - path: /logout
+        backend:
+          serviceName: apiseguridadnp
+          servicePort: 80
+      - path: /api/security/*
+        backend:
+          serviceName: apiseguridadnp
+          servicePort: 80
+      - path: /api/sede/*
+        backend:
+          serviceName: apisedenp
+          servicePort: 80
+      - path: /api/negocio/*
+        backend:
+          serviceName: apinegocionp
+          servicePort: 80
+      - path: /api/tiponegocio/*
+        backend:
+          serviceName: apinegocionp
+          servicePort: 80
+      - path: /api/feedback/*
+        backend:
+          serviceName: apifeedbacknp
+          servicePort: 80

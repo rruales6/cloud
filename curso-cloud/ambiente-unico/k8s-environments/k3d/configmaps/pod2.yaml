@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-cm-1
+spec:
+  containers:
+    - name: contenedor1
+      image: k8s.gcr.io/busybox
+      command: [ "/bin/sh", "-c", "sleep 1000000" ]
+      envFrom:
+      - configMapRef:
+          name: cm-2
+      env:
+      - name: MYVERSION
+        valueFrom:
+          configMapKeyRef:
+            name: cm-1
+            key: VERSION
+      - name: MYAPPPROPERTIES
+        valueFrom:
+          configMapKeyRef:
+            name: cm-1
+            key: application.properties
+        
+      volumeMounts:
+        - name: volumen-config-map
+          mountPath: /etc/config-map
+  volumes:
+    - name: volumen-config-map
+      configMap:
+        name: cm-1

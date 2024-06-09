@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ubuntu
+  namespace: kube-system
+  labels:
+    app: ubuntu
+spec:
+  containers:
+   - name: ubuntu
+     image: ubuntu:18.04
+     command: ["sleep", "3600"]
+#instalar curl y llegar al svc 

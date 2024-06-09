@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-api-service
+  namespace: name2  # Optional: Replace with your namespace
+spec:
+  selector:
+    app: app-pod      # Replace with the labels of your pods
+  ports:
+    - protocol: TCP
+      port: 80                # Port on the service
+      targetPort: 8080        # Port on the pods
+  type: LoadBalancer  
